@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ระบบเช็คห้องว่าง/ไม่ว่าง</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .room {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    }
+    .available {
+      color: green;
+      font-weight: bold;
+    }
+    .occupied {
+      color: red;
+      font-weight: bold;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>ระบบเช็คห้องว่าง/ไม่ว่าง (101–130)</h1>
+  <div id="room-list"></div>
+
+  <script>
+    const roomList = document.getElementById("room-list");
+
+    // โหลดข้อมูลจาก LocalStorage ถ้ามี
+    let roomStatus = JSON.parse(localStorage.getItem("roomStatus")) || {};
+
+    // ถ้าไม่มีข้อมูล ให้สร้างค่าเริ่มต้น
+    for (let i = 101; i <= 130; i++) {
+      if (roomStatus[i] === undefined) {
+        roomStatus[i] = false; // false = ว่าง
+      }
+    }
+
+    // ฟังก์ชันบันทึกลง LocalStorage
+    function saveStatus() {
+      localStorage.setItem("roomStatus", JSON.stringify(roomStatus));
+    }
+
+    // สร้าง UI
+    for (let i = 101; i <= 130; i++) {
+      const roomDiv = document.createElement("div");
+      roomDiv.className = "room";
+
+      const label = document.createElement("span");
+      label.textContent = `ห้อง ${i} : ${roomStatus[i] ? "ไม่ว่าง" : "ว่าง"}`;
+      label.className = roomStatus[i] ? "occupied" : "available";
+
+      const button = document.createElement("button");
+      button.textContent = "เปลี่ยนสถานะ";
+
+      button.onclick = () => {
+        roomStatus[i] = !roomStatus[i];
+        label.textContent = `ห้อง ${i} : ${roomStatus[i] ? "ไม่ว่าง" : "ว่าง"}`;
+        label.className = roomStatus[i] ? "occupied" : "available";
+        saveStatus(); // บันทึกทุกครั้งที่เปลี่ยน
+      };
+
+      roomDiv.appendChild(label);
+      roomDiv.appendChild(button);
+      roomList.appendChild(roomDiv);
+    }
+  </script>
+</body>
+</html>
